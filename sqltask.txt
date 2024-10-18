@@ -89,16 +89,16 @@ select * from products
 select * from orders
 
 
-
+---------------------------------------------------------------------------------------------------------------
 
 QUESTION : Retrieve all customers who have placed an order in the last 30 days.
-
+ANS:
 SELECT DISTINCT c.*
 FROM customers c
 JOIN orders o ON c.id = o.customer_id
 WHERE o.order_date >= CURDATE() - INTERVAL 30 DAY;
 
-
+---------------------------------------------------------------------------------------------------------------
 QUESTION :  Get the total amount of all orders placed by each customer.
 
 ANS:
@@ -115,7 +115,7 @@ GROUP BY
 ORDER BY 
     total_orders_amount DESC;
 
-
+---------------------------------------------------------------------------------------------------------------
 
 
 QUESTION : Update the price of Product C to 45.00.
@@ -125,6 +125,7 @@ UPDATE products
 SET price = 45.00
 WHERE id = 3; 
 
+---------------------------------------------------------------------------------------------------------------
 
 
 QUESTION : Add a new column discount to the products table.
@@ -133,17 +134,22 @@ ANS:
 ALTER TABLE products
 ADD discount decimal(5, 2);
 
+---------------------------------------------------------------------------------------------------------------
 -----------------VIEW------------------------------------
 SELECT * FROM products
+---------------------------------------------------------------------------------------------------------------
 
 
 QUESTION : Retrieve the top 3 products with the highest price.
+
 ANS:
 SELECT *
 FROM products
 ORDER BY price DESC
 LIMIT 3;
 
+
+---------------------------------------------------------------------------------------------------------------
 
 QUESTION : Get the names of customers who have ordered Product A.
 
@@ -154,9 +160,10 @@ JOIN orders o ON c.id = o.customer_id
 JOIN products p ON o.id = p.id  
 WHERE p.name = 'Laptop';  
 
-
+---------------------------------------------------------------------------------------------------------------
 
 QUESTION : Join the orders and customers tables to retrieve the customer's name and order date for each order. 
+
 ANS:
 SELECT 
     c.name AS customer_name,
@@ -167,13 +174,19 @@ JOIN
     customers c ON o.customer_id = c.id;
 
 
+---------------------------------------------------------------------------------------------------------------
+
 QUESTION : Retrieve the orders with a total amount greater than 150.00.
+
 ANS:
 SELECT *
 FROM orders
 WHERE total_amount > 150.00;
 
+---------------------------------------------------------------------------------------------------------------
+
 QUESTION : Normalize the database by creating a separate table for order items and updating the orders table to reference the order_items table.
+
 ANS:
 CREATE TABLE order_items (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -185,9 +198,11 @@ CREATE TABLE order_items (
     FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
+---------------------------------------------------------------------------------------------------------------
 -----------------VIEW------------------------------------
 describe order_items
 
+---------------------------------------------------------------------------------------------------------------
 
 ---------------------INSERT TABLE IN order_items-------------------------------
 INSERT INTO order_items (order_id, product_id, quantity, price) VALUES
@@ -196,6 +211,12 @@ INSERT INTO order_items (order_id, product_id, quantity, price) VALUES
 (2, 2, 1, 699.99),  -- 1 Smartphone
 (3, 4, 1, 249.99),  -- 1 Smartwatch
 (4, 5, 1, 499.99);  -- 1 Tablet
+
+---------------------------------------------------------------------------------------------------------------
+VIEW
+SELECT * FROM order_items 
+
+---------------------------------------------------------------------------------------------------------------
 
 
 QUESTION : Retrieve the average total of all orders.
@@ -207,6 +228,7 @@ FROM (
     GROUP BY order_id
 ) AS order_totals;
 
+------------------------------------------------End---------------------------------------------------------------
 
 
 
