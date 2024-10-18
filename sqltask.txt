@@ -1,0 +1,214 @@
+Question : Create a database named ecommerce.
+
+Ans :Create database ecommerce
+
+-------------------select Database-----------------------------
+use ecommerce
+
+
+
+Question : Create three tables: customers, orders, and products.
+Table Structure:
+
+
+Ans :
+CREATE TABLE customers (
+    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name varchar(30) NOT NULL,
+    email varchar(30),
+    address varchar(30)
+);
+
+CREATE TABLE orders (
+    id int NOT NULL AUTO_INCREMENT primary key,
+    customer_id int,
+    order_date Date,
+    total_amount decimal(10,2),
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
+);
+
+CREATE TABLE products (
+    id int NOT NULL AUTO_INCREMENT primary key,
+    name varchar(30) NOT NULL,
+    price decimal(10,2),
+    description text
+);
+
+
+---------------------Table Structure View-----------------------------
+describe customers
+describe orders
+describe products
+
+
+
+
+---------------------------Insert some sample data into the tables.---------------------------------------
+
+INSERT INTO customers (name, email, address) VALUES
+('Alice Johnson', 'alice@example.com', '123 Elm St'),
+('Bob Smith', 'bob@example.com', '456 Oak St'),
+('Charlie Brown', 'charlie@example.com', '789 Pine St'),
+('Diana Prince', 'diana@example.com', '135 Maple St'),
+('Ethan Hunt', 'ethan@example.com', '246 Birch St'),
+('Fiona Gallagher', 'fiona@example.com', '357 Cedar St'),
+('George Washington', 'george@example.com', '468 Spruce St'),
+('Hannah Montana', 'hannah@example.com', '579 Fir St'),
+('Isaac Newton', 'isaac@example.com', '680 Willow St'),
+('Jasmine Sullivan', 'jasmine@example.com', '791 Cherry St');
+
+
+INSERT INTO products (name, price, description) VALUES
+('Laptop', 999.99, 'High-performance laptop for professionals.'),
+('Smartphone', 699.99, 'Latest model with amazing features.'),
+('Headphones', 199.99, 'Noise-cancelling over-ear headphones.'),
+('Smartwatch', 249.99, 'Track your fitness and notifications.'),
+('Tablet', 499.99, 'Portable tablet with a large display.'),
+('Wireless Mouse', 29.99, 'Ergonomic wireless mouse.'),
+('Keyboard', 49.99, 'Mechanical keyboard for a better typing experience.'),
+('External Hard Drive', 89.99, '1TB external storage for backups.'),
+('Monitor', 199.99, '27-inch 4K display for clarity.'),
+('Printer', 129.99, 'All-in-one printer with scanning capabilities.');
+
+
+INSERT INTO orders (customer_id, order_date, total_amount) VALUES
+(1, '2024-10-18', 1199.99),
+(2, '2024-02-16', 699.99),
+(3, '2024-05-17', 199.99),
+(4, '2024-08-18', 249.99),
+(5, '2024-03-19', 499.99),
+(6, '2024-10-25', 29.99),
+(7, '2024-10-21', 49.99),
+(8, '2024-06-22', 89.99),
+(9, '2024-10-23', 199.99),
+(10, '2024-05-24', 129.99);
+
+QUESTION:Table Values View
+ANS: select * from customers
+select * from products
+select * from orders
+
+
+
+
+QUESTION : Retrieve all customers who have placed an order in the last 30 days.
+
+SELECT DISTINCT c.*
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+WHERE o.order_date >= CURDATE() - INTERVAL 30 DAY;
+
+
+QUESTION :  Get the total amount of all orders placed by each customer.
+
+ANS:
+SELECT 
+    c.id AS customer_id,
+    c.name AS customer_name,
+    SUM(o.total_amount) AS total_orders_amount
+FROM 
+    customers c
+LEFT JOIN 
+    orders o ON c.id = o.customer_id
+GROUP BY 
+    c.id, c.name
+ORDER BY 
+    total_orders_amount DESC;
+
+
+
+
+QUESTION : Update the price of Product C to 45.00.
+ANS:
+
+UPDATE products
+SET price = 45.00
+WHERE id = 3; 
+
+
+
+QUESTION : Add a new column discount to the products table.
+
+ANS:
+ALTER TABLE products
+ADD discount decimal(5, 2);
+
+-----------------VIEW------------------------------------
+SELECT * FROM products
+
+
+QUESTION : Retrieve the top 3 products with the highest price.
+ANS:
+SELECT *
+FROM products
+ORDER BY price DESC
+LIMIT 3;
+
+
+QUESTION : Get the names of customers who have ordered Product A.
+
+ANS:
+SELECT DISTINCT c.name
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+JOIN products p ON o.id = p.id  
+WHERE p.name = 'Laptop';  
+
+
+
+QUESTION : Join the orders and customers tables to retrieve the customer's name and order date for each order. 
+ANS:
+SELECT 
+    c.name AS customer_name,
+    o.order_date
+FROM 
+    orders o
+JOIN 
+    customers c ON o.customer_id = c.id;
+
+
+QUESTION : Retrieve the orders with a total amount greater than 150.00.
+ANS:
+SELECT *
+FROM orders
+WHERE total_amount > 150.00;
+
+QUESTION : Normalize the database by creating a separate table for order items and updating the orders table to reference the order_items table.
+ANS:
+CREATE TABLE order_items (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    order_id INT,
+    product_id INT,
+    quantity INT NOT NULL,
+    price DECIMAL(10, 2),
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+-----------------VIEW------------------------------------
+describe order_items
+
+
+---------------------INSERT TABLE IN order_items-------------------------------
+INSERT INTO order_items (order_id, product_id, quantity, price) VALUES
+(1, 1, 1, 999.99),  -- 1 Laptop
+(1, 3, 2, 199.99),  -- 2 Headphones
+(2, 2, 1, 699.99),  -- 1 Smartphone
+(3, 4, 1, 249.99),  -- 1 Smartwatch
+(4, 5, 1, 499.99);  -- 1 Tablet
+
+
+QUESTION : Retrieve the average total of all orders.
+ANS:
+SELECT AVG(order_total) AS average_order_total
+FROM (
+    SELECT SUM(price * quantity) AS order_total
+    FROM order_items
+    GROUP BY order_id
+) AS order_totals;
+
+
+
+
+
+
